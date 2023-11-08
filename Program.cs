@@ -1,44 +1,61 @@
-﻿namespace Read_data_from_file_and_filter_name_change_value_M_F
+﻿using System;
+
+namespace RecsInput
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-
-    namespace Read_data_from_file
+    class Program
     {
-        public class Person
+        static void Main(string[] args)
         {
-            //instance field
-            protected string _name = "";
-            protected string _gender = "";
-            protected byte _age = 0;
+            Console.WriteLine("Rectangles' data (width & length separated by space, eg. 2 5)");
 
-            //instance method
-            public string GetName() { return _name; }
-            public string GetGender() { return _gender; }
-            public byte GetAge() => _age;
+            string result = "";
+            double totalArea = 0.0;
+            int count = 0;
 
-            public bool SetData(string data, string delimiter = "/")
+            for (int i = 0; i < 3; i++)
             {
-                string[] arr = data.Split(delimiter);
-                if (arr.Length < 3) return false;
-                string name = arr[0].Trim();
-                string gender = arr[1].Trim();
-                if (byte.TryParse(arr[2], out byte age) == false) return false;
-                _name = name;
-                _gender = gender;
-                _age = age;
-                return true;
+                Console.Write($"[{count + 1}] : ");
+                var line = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(line))
+                    break;
+
+                var data = line.Split(' ');
+
+                if (data.Length < 2)
+                    break;
+
+                if (!double.TryParse(data[0], out double width) || !double.TryParse(data[1], out double length))
+                    continue;
+
+                count++;
+                double area = width * length;
+                totalArea += area;
+                var lineInfo = $"{count,10} {width,10:n2} {length,10:n2} {area,10:n2}";
+
+                if (!string.IsNullOrEmpty(result))
+                    result += "\n";
+
+                result += lineInfo;
             }
 
-            public string GetInfo()
+            if (count == 0)
             {
-                string nameInfo = $"{_name,-30}";
-                string genderInfo = $"{_gender,-6}";
-                string ageInfo = $"{_age,4}";
-                return $"{nameInfo} {genderInfo} {ageInfo}";
+                Console.WriteLine("No valid input provided.");
+                return;
             }
+
+            string heading = $"{"no",10} {"width",10} {"length",10} {"area",10}";
+            string bar = new string('-', 43);
+
+            Console.WriteLine();
+            Console.WriteLine(heading);
+            Console.WriteLine(bar);
+            Console.WriteLine(result);
+            Console.WriteLine(bar);
+
+            var totalText = $"Total: {totalArea:n2}";
+            Console.WriteLine($"{totalText,43}");
         }
     }
 }
